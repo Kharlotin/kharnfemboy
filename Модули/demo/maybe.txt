@@ -1,0 +1,29 @@
+private void LoadUsers()
+{
+    try
+    {
+        using (var conn = DatabaseHelper.GetConnection())
+        {
+            conn.Open();
+            string sql = "SELECT UserID, Login, Role, IsBlocked FROM Users ORDER BY UserID";
+            using (var adapter = new SqlDataAdapter(sql, conn))
+            {
+                var table = new DataTable();
+                adapter.Fill(table);
+
+                table.Columns["UserID"].ColumnName = "ID";
+                table.Columns["Login"].ColumnName = "Логин";
+                table.Columns["Role"].ColumnName = "Роль";
+                table.Columns["IsBlocked"].ColumnName = "Заблокирован";
+
+                dgvUsers.DataSource = table;
+                dgvUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show("Ошибка загрузки пользователей: " + ex.Message,
+            "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+}
